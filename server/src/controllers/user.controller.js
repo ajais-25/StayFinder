@@ -20,13 +20,22 @@ const registerUser = async (req, res) => {
             });
         }
 
-        const user = User.create({
+        const newUser = await User.create({
             name,
             email,
             password,
             phoneNumber,
             address,
         });
+
+        const user = await User.findById(newUser._id).select("-password");
+
+        if (!user) {
+            return res.status(500).json({
+                success: false,
+                message: "User registration failed",
+            });
+        }
 
         const token = user.generateAuthToken();
 
@@ -39,13 +48,7 @@ const registerUser = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "User registered successfully",
-            data: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                address: user.address,
-            },
+            data: user,
             token,
         });
     } catch (error) {
