@@ -11,10 +11,12 @@ import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
+router.use(authenticateUser); // Ensure all routes require authentication
+
 router.get("/", getAllListings);
 router.get("/:id", getListingById);
-router.post("/", authenticateUser, upload.array("images", 10), createListing);
-router.put("/:id", authenticateUser, upload.array("images", 10), updateListing);
-router.delete("/:id", authenticateUser, deleteListing);
+router.post("/", upload.array("images", 10), createListing);
+router.put("/:id", upload.array("images", 10), updateListing);
+router.delete("/:id", deleteListing);
 
 export default router;

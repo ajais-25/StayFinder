@@ -1,6 +1,7 @@
 import express from "express";
 import userRoutes from "./user.routes.js";
 import listingsRoutes from "./listings.routes.js";
+import bookingRoutes from "./booking.routes.js";
 
 const router = express.Router();
 
@@ -9,6 +10,9 @@ router.use("/auth", userRoutes);
 
 // Mount listings routes
 router.use("/listings", listingsRoutes);
+
+// Mount booking routes
+router.use("/bookings", bookingRoutes);
 
 // Health check route
 router.get("/health", (req, res) => {
