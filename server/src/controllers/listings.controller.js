@@ -27,7 +27,10 @@ const getAllListings = async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const listings = await Listing.find(filter)
+        const listings = await Listing.find({
+            ...filter,
+            host: { $ne: req.user?._id },
+        })
             .populate("host", "name email")
             .skip(skip)
             .limit(Number(limit))
