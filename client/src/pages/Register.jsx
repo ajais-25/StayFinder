@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,7 +79,6 @@ const Register = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -94,7 +95,14 @@ const Register = () => {
       );
 
       if (response.data.success === true) {
-        navigate("/");
+        // Extract token and user data from response
+        const { token, data } = response.data || {};
+
+        // Use the login function from auth context to automatically sign in the user
+        login(token, data);
+
+        // Redirect to home page
+        navigate("/", { replace: true });
       } else {
         setErrors({ submit: response.data.message || "Registration failed" });
         return;

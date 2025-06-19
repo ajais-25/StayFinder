@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { API } from "../api";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,11 @@ const Login = () => {
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  // Get the intended destination from location state, default to home
+  const from = location.state?.from?.pathname || "/";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +52,6 @@ const Login = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -58,7 +63,14 @@ const Login = () => {
       const response = await axios.post(`${API}/auth/login`, formData);
 
       if (response.data.success === true) {
-        navigate("/");
+        // Extract token and user data from response
+        const { token, data } = response.data || {};
+
+        // Use the login function from auth context
+        login(token, data);
+
+        // Redirect to the intended page or home
+        navigate(from, { replace: true });
       } else {
         setErrors({ submit: response.data.message || "Login failed" });
         return;
