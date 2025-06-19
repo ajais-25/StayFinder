@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
 import { PropertyListingsSkeleton } from "./SkeletonLoaders";
-import { API } from "../api";
-import axios from "axios";
+import api from "../api";
 
 const PropertyListings = () => {
   const [listings, setListings] = useState([]);
@@ -38,7 +37,7 @@ const PropertyListings = () => {
         queryParams.append("maxPrice", filterParams.maxPrice);
       }
 
-      const response = await axios(`${API}/listings?${queryParams}`);
+      const response = await api(`/listings?${queryParams}`);
 
       if (!response.data.success) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -185,13 +184,13 @@ const PropertyListings = () => {
             <div className="flex items-end space-x-2">
               <button
                 onClick={() => handleFilterChange(filters)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
               >
                 Search
               </button>
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors duration-200"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors duration-200 cursor-pointer"
               >
                 Clear
               </button>

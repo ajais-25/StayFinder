@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import api from "../api";
 
 const AuthContext = createContext();
 
@@ -19,7 +20,6 @@ export const AuthProvider = ({ children }) => {
     // Check for authentication on app load
     checkAuthStatus();
   }, []);
-
   const checkAuthStatus = async () => {
     try {
       // Check if user has a valid token in localStorage or sessionStorage
@@ -28,23 +28,29 @@ export const AuthProvider = ({ children }) => {
         sessionStorage.getItem("authToken");
 
       if (token) {
-        // You can add an API call here to verify the token is still valid
-        // For now, we'll just check if token exists
-        setIsAuthenticated(true);
-        // You might want to fetch user data here as well
-        // const userData = await fetchUserData(token);
-        // setUser(userData);
+        // Verify the token is still valid and fetch user data
+        const response = await api.get("/auth/profile");
+
+        if (response.data.success) {
+          setIsAuthenticated(true);
+          setUser(response.data.data);
+        } else {
+          // Token is invalid, clear it
+          localStorage.removeItem("authToken");
+          sessionStorage.removeItem("authToken");
+        }
       }
     } catch (error) {
       console.error("Error checking auth status:", error);
       // Clear invalid token
       localStorage.removeItem("authToken");
       sessionStorage.removeItem("authToken");
+      setIsAuthenticated(false);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
-
   const login = (token, userData) => {
     localStorage.setItem("authToken", token);
     setIsAuthenticated(true);

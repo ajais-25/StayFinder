@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { API } from "../api";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -88,11 +87,7 @@ const Register = () => {
 
     try {
       const { confirmPassword, ...registrationData } = formData;
-
-      const response = await axios.post(
-        `${API}/auth/register`,
-        registrationData
-      );
+      const response = await api.post("/auth/register", registrationData);
 
       if (response.data.success === true) {
         // Extract token and user data from response

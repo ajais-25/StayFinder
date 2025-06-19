@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import { API } from "../api";
+import api from "../api";
 import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
@@ -60,7 +59,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API}/auth/login`, formData);
+      const response = await api.post("/auth/login", formData);
 
       if (response.data.success === true) {
         // Extract token and user data from response
@@ -76,7 +75,7 @@ const Login = () => {
         return;
       }
 
-      //   console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error("Login error:", error);
       setErrors({ submit: "Invalid email or password" });
