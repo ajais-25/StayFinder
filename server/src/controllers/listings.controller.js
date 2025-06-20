@@ -36,7 +36,7 @@ const getAllListings = async (req, res) => {
             .limit(Number(limit))
             .sort({ createdAt: -1 });
 
-        const totalListings = await Listing.countDocuments(filter);
+        const totalListings = listings.length;
         const totalPages = Math.ceil(totalListings / limit);
 
         res.status(200).json({
