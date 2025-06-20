@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const PropertyCard = ({ listing }) => {
   const [imageError, setImageError] = useState(false);
@@ -28,9 +29,11 @@ const PropertyCard = ({ listing }) => {
     listing.images && listing.images.length > 0
       ? listing.images[currentImageIndex]
       : null;
-
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+    <Link
+      to={`/listing/${listing._id}`}
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    >
       {/* Image Section */}
       <div className="relative h-48 bg-gray-200">
         {currentImage && !imageError ? (
@@ -168,7 +171,7 @@ const PropertyCard = ({ listing }) => {
           </p>
         )}
       </div>
-    </div>
+    </Link>
   );
 };
 
