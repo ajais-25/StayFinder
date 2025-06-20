@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Booking } from "../models/booking.model.js";
 import { Listing } from "../models/listings.model.js";
 
@@ -193,7 +192,7 @@ const updateBookingStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: `Booking ${status} successfully`,
+            message: `Booking cancelled successfully`,
             data: updatedBooking,
         });
     } catch (error) {

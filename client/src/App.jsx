@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateListing from "./pages/CreateListing";
 import Profile from "./pages/Profile";
 import ListingDetails from "./pages/ListingDetails";
+import MyBookings from "./pages/MyBookings";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="create-listing" element={<CreateListing />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="my-bookings" element={<MyBookings />} />
               <Route path="listing/:id" element={<ListingDetails />} />
 
               {/* Catch all route - 404 */}

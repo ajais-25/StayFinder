@@ -96,9 +96,7 @@ const Navigation = () => {
                       <p className="text-xs text-gray-500 truncate">
                         {user?.email}
                       </p>
-                    </div>
-
-                    {/* Profile Link */}
+                    </div>                    {/* Profile Link */}
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150"
@@ -119,6 +117,30 @@ const Navigation = () => {
                           />
                         </svg>
                         <span>Profile</span>
+                      </div>
+                    </Link>
+
+                    {/* My Bookings Link */}
+                    <Link
+                      to="/my-bookings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-4 0h0m-4 0v4m0 0h8m-8 0v6a2 2 0 002 2h4a2 2 0 002-2v-6m-4-6v4m4 0h0"
+                          />
+                        </svg>
+                        <span>My Bookings</span>
                       </div>
                     </Link>
 
