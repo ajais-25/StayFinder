@@ -96,7 +96,8 @@ const Navigation = () => {
                       <p className="text-xs text-gray-500 truncate">
                         {user?.email}
                       </p>
-                    </div>                    {/* Profile Link */}
+                    </div>{" "}
+                    {/* Profile Link */}
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150"
@@ -119,7 +120,6 @@ const Navigation = () => {
                         <span>Profile</span>
                       </div>
                     </Link>
-
                     {/* My Bookings Link */}
                     <Link
                       to="/my-bookings"
@@ -143,7 +143,6 @@ const Navigation = () => {
                         <span>My Bookings</span>
                       </div>
                     </Link>
-
                     {/* Logout */}
                     <button
                       onClick={() => {
