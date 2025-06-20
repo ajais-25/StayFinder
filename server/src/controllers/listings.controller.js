@@ -63,6 +63,29 @@ const getAllListings = async (req, res) => {
     }
 };
 
+const getHostListings = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const listings = await Listing.find({ host: userId })
+            .populate("host", "name email phoneNumber")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            message: "Host listings fetched successfully",
+            data: listings,
+        });
+    } catch (error) {
+        console.error("Error fetching host listings:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+};
+
 // Get listing by ID
 const getListingById = async (req, res) => {
     try {
@@ -259,6 +282,7 @@ const deleteListing = async (req, res) => {
 
 export {
     getAllListings,
+    getHostListings,
     getListingById,
     createListing,
     updateListing,

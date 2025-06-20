@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     getAllListings,
+    getHostListings,
     getListingById,
     createListing,
     updateListing,
@@ -14,6 +15,7 @@ const router = Router();
 router.use(authenticateUser); // Ensure all routes require authentication
 
 router.get("/", getAllListings);
+router.get("/dashboard/listings", getHostListings);
 router.get("/:id", getListingById);
 router.post("/", upload.array("images", 10), createListing);
 router.put("/:id", upload.array("images", 10), updateListing);
