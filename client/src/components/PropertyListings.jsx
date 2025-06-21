@@ -13,6 +13,8 @@ const PropertyListings = () => {
     location: "",
     minPrice: "",
     maxPrice: "",
+    checkIn: "",
+    checkOut: "",
   });
   const fetchListings = async (page = 1, filterParams = {}) => {
     try {
@@ -23,9 +25,7 @@ const PropertyListings = () => {
       const params = {
         page: page.toString(),
         limit: "12", // Show 12 listings per page
-      };
-
-      // Add filters if they exist
+      }; // Add filters if they exist
       if (filterParams.location) {
         params.location = filterParams.location;
       }
@@ -34,6 +34,12 @@ const PropertyListings = () => {
       }
       if (filterParams.maxPrice) {
         params.maxPrice = filterParams.maxPrice;
+      }
+      if (filterParams.checkIn) {
+        params.checkIn = filterParams.checkIn;
+      }
+      if (filterParams.checkOut) {
+        params.checkOut = filterParams.checkOut;
       }
 
       const response = await listingsAPI.getAll(params);
@@ -57,8 +63,19 @@ const PropertyListings = () => {
   useEffect(() => {
     fetchListings(currentPage, filters);
   }, [currentPage]);
-
   const handleFilterChange = (newFilters) => {
+    // Validate dates
+    if (newFilters.checkIn && newFilters.checkOut) {
+      const checkInDate = new Date(newFilters.checkIn);
+      const checkOutDate = new Date(newFilters.checkOut);
+
+      if (checkOutDate <= checkInDate) {
+        setError("Check-out date must be after check-in date");
+        return;
+      }
+    }
+
+    setError(null);
     setFilters(newFilters);
     setCurrentPage(1); // Reset to first page when filters change
     fetchListings(1, newFilters);
@@ -68,9 +85,14 @@ const PropertyListings = () => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
   const clearFilters = () => {
-    const clearedFilters = { location: "", minPrice: "", maxPrice: "" };
+    const clearedFilters = {
+      location: "",
+      minPrice: "",
+      maxPrice: "",
+      checkIn: "",
+      checkOut: "",
+    };
     setFilters(clearedFilters);
     setCurrentPage(1);
     fetchListings(1, clearedFilters);
@@ -129,11 +151,10 @@ const PropertyListings = () => {
             Find your perfect accommodation from our collection of unique
             properties
           </p>
-        </div>
-
+        </div>{" "}
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Location
@@ -144,6 +165,34 @@ const PropertyListings = () => {
                 value={filters.location}
                 onChange={(e) =>
                   setFilters({ ...filters, location: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Check-in
+              </label>
+              <input
+                type="date"
+                value={filters.checkIn}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) =>
+                  setFilters({ ...filters, checkIn: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Check-out
+              </label>
+              <input
+                type="date"
+                value={filters.checkOut}
+                min={filters.checkIn || new Date().toISOString().split("T")[0]}
+                onChange={(e) =>
+                  setFilters({ ...filters, checkOut: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -191,18 +240,23 @@ const PropertyListings = () => {
               </button>
             </div>
           </div>
-        </div>
-
+        </div>{" "}
         {/* Results Info */}
         {pagination.totalListings !== undefined && (
           <div className="mb-4">
             <p className="text-gray-600">
               Showing {listings.length} of {pagination.totalListings} properties
               {filters.location && ` in "${filters.location}"`}
+              {filters.checkIn &&
+                filters.checkOut &&
+                ` available from ${new Date(filters.checkIn).toLocaleDateString(
+                  "en-GB"
+                )} to ${new Date(filters.checkOut).toLocaleDateString(
+                  "en-GB"
+                )}`}
             </p>
           </div>
         )}
-
         {/* Property Grid */}
         {listings.length > 0 ? (
           <>
@@ -280,13 +334,21 @@ const PropertyListings = () => {
             </svg>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               No properties found
-            </h3>
+            </h3>{" "}
             <p className="text-gray-600">
-              {filters.location || filters.minPrice || filters.maxPrice
+              {filters.location ||
+              filters.minPrice ||
+              filters.maxPrice ||
+              filters.checkIn ||
+              filters.checkOut
                 ? "Try adjusting your search criteria to find more properties."
                 : "There are no properties available at the moment."}
             </p>
-            {(filters.location || filters.minPrice || filters.maxPrice) && (
+            {(filters.location ||
+              filters.minPrice ||
+              filters.maxPrice ||
+              filters.checkIn ||
+              filters.checkOut) && (
               <button
                 onClick={clearFilters}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"

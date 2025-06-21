@@ -11,6 +11,8 @@ const getAllListings = async (req, res) => {
             location,
             minPrice,
             maxPrice,
+            checkIn,
+            checkOut,
         } = req.query;
 
         // Build filter object
@@ -25,26 +27,71 @@ const getAllListings = async (req, res) => {
             if (minPrice) filter.pricePerNight.$gte = Number(minPrice);
             if (maxPrice) filter.pricePerNight.$lte = Number(maxPrice);
         }
-
         const skip = (page - 1) * limit;
 
-        const listings = await Listing.find({
+        // Get all listings that match the basic filters
+        let listings = await Listing.find({
             ...filter,
             host: { $ne: req.user?._id },
         })
             .populate("host", "name email")
-            .skip(skip)
-            .limit(Number(limit))
             .sort({ createdAt: -1 });
 
+        // Filter by date availability if check-in and check-out dates are provided
+        if (checkIn && checkOut) {
+            const requestedCheckIn = new Date(checkIn);
+            const requestedCheckOut = new Date(checkOut);
+
+            // Validate dates
+            if (requestedCheckIn >= requestedCheckOut) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Check-out date must be after check-in date",
+                });
+            }
+
+            if (requestedCheckIn < new Date().setHours(0, 0, 0, 0)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Check-in date cannot be in the past",
+                });
+            }
+
+            // Filter out listings that have conflicting bookings
+            const availableListings = [];
+
+            for (const listing of listings) {
+                const conflictingBookings = await Booking.find({
+                    listing: listing._id,
+                    status: "confirmed",
+                    $or: [
+                        {
+                            // Requested dates overlap with existing booking
+                            checkIn: { $lt: requestedCheckOut },
+                            checkOut: { $gt: requestedCheckIn },
+                        },
+                    ],
+                });
+
+                // If no conflicting bookings, the listing is available
+                if (conflictingBookings.length === 0) {
+                    availableListings.push(listing);
+                }
+            }
+
+            listings = availableListings;
+        }
+
+        // Apply pagination to the filtered results
         const totalListings = listings.length;
+        const paginatedListings = listings.slice(skip, skip + Number(limit));
         const totalPages = Math.ceil(totalListings / limit);
 
         res.status(200).json({
             success: true,
             message: "Listings fetched successfully",
             data: {
-                listings,
+                listings: paginatedListings,
                 pagination: {
                     currentPage: Number(page),
                     totalPages,
