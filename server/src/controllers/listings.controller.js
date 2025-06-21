@@ -1,4 +1,5 @@
 import { Listing } from "../models/listings.model.js";
+import { Booking } from "../models/booking.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // Get all listings
@@ -103,10 +104,41 @@ const getListingById = async (req, res) => {
             });
         }
 
+        // Fetch all confirmed bookings for this listing
+        const bookings = await Booking.find({
+            listing: id,
+            status: "confirmed",
+        }).select("checkIn checkOut");
+
+        // Generate array of unavailable dates
+        const unavailableDates = [];
+
+        bookings.forEach((booking) => {
+            const checkIn = new Date(booking.checkIn);
+            const checkOut = new Date(booking.checkOut);
+
+            // Add all dates from checkIn to checkOut (inclusive)
+            for (
+                let date = new Date(checkIn);
+                date <= checkOut;
+                date.setDate(date.getDate() + 1)
+            ) {
+                unavailableDates.push(
+                    new Date(date).toISOString().split("T")[0]
+                ); // Format as YYYY-MM-DD
+            }
+        });
+
+        // Remove duplicates and sort
+        const uniqueUnavailableDates = [...new Set(unavailableDates)].sort();
+
         res.status(200).json({
             success: true,
             message: "Listing fetched successfully",
-            data: listing,
+            data: {
+                ...listing.toObject(),
+                unavailableDates: uniqueUnavailableDates,
+            },
         });
     } catch (error) {
         console.error("Error fetching listing:", error);
@@ -121,8 +153,7 @@ const getListingById = async (req, res) => {
 // Create a new listing
 const createListing = async (req, res) => {
     try {
-        const { title, description, location, pricePerNight, availability } =
-            req.body;
+        const { title, description, location, pricePerNight } = req.body;
         const host = req.user._id; // Assuming user is attached to req from auth middleware
 
         if (!title || !description || !location || !pricePerNight) {
@@ -151,7 +182,6 @@ const createListing = async (req, res) => {
             pricePerNight: Number(pricePerNight),
             images: imageUrls,
             host,
-            availability: availability ? JSON.parse(availability) : undefined,
         });
 
         const populatedListing = await Listing.findById(listing._id).populate(
@@ -178,8 +208,7 @@ const createListing = async (req, res) => {
 const updateListing = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, location, pricePerNight, availability } =
-            req.body;
+        const { title, description, location, pricePerNight } = req.body;
         const userId = req.user._id;
 
         const listing = await Listing.findById(id);
@@ -215,7 +244,6 @@ const updateListing = async (req, res) => {
         if (description) updateData.description = description;
         if (location) updateData.location = location;
         if (pricePerNight) updateData.pricePerNight = Number(pricePerNight);
-        if (availability) updateData.availability = JSON.parse(availability);
         if (newImageUrls.length > 0) {
             updateData.images = [...listing.images, ...newImageUrls];
         }

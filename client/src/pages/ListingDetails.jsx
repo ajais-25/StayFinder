@@ -10,20 +10,19 @@ const ListingDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState("");
+  const [unavailableDates, setUnavailableDates] = useState([]);
 
   // Booking form state
   const [checkInDate, setCheckInDate] = useState(null);
   const [checkOutDate, setCheckOutDate] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
   const [nights, setNights] = useState(0);
-
   // Fetch listing details
   useEffect(() => {
     const fetchListing = async () => {
@@ -32,6 +31,10 @@ const ListingDetails = () => {
         const response = await api.get(`/listings/${id}`);
         if (response.data.success) {
           setListing(response.data.data);
+          // Set unavailable dates from the response
+          if (response.data.data.unavailableDates) {
+            setUnavailableDates(response.data.data.unavailableDates);
+          }
         } else {
           setError(response.data.message || "Failed to fetch listing");
         }
@@ -63,7 +66,6 @@ const ListingDetails = () => {
       setTotalPrice(0);
     }
   }, [checkInDate, checkOutDate, listing]);
-
   // Handle booking submission
   const handleBooking = async (e) => {
     e.preventDefault();
@@ -80,6 +82,14 @@ const ListingDetails = () => {
 
     if (checkInDate < new Date()) {
       setBookingError("Check-in date cannot be in the past");
+      return;
+    }
+
+    // Check if selected date range contains any unavailable dates
+    if (hasUnavailableDatesInRange()) {
+      setBookingError(
+        "Selected dates contain unavailable dates. Please choose different dates."
+      );
       return;
     }
 
@@ -115,19 +125,45 @@ const ListingDetails = () => {
       setBookingLoading(false);
     }
   };
-
   // Date picker restrictions
   const isDateDisabled = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return date < today;
-  };
 
+    // Disable past dates
+    if (date < today) {
+      return true;
+    }
+
+    // Disable unavailable dates
+    const dateString = date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    return unavailableDates.includes(dateString);
+  };
   const getMinCheckOutDate = () => {
     if (checkInDate) {
       return addDays(checkInDate, 1);
     }
     return addDays(new Date(), 1);
+  };
+
+  // Check if selected date range contains any unavailable dates
+  const hasUnavailableDatesInRange = () => {
+    if (!checkInDate || !checkOutDate) return false;
+
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+
+    for (
+      let date = new Date(start);
+      date < end;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const dateString = date.toISOString().split("T")[0];
+      if (unavailableDates.includes(dateString)) {
+        return true;
+      }
+    }
+    return false;
   };
 
   if (loading) {
@@ -232,7 +268,6 @@ const ListingDetails = () => {
               {listing.location}
             </p>
           </div>
-
           {/* Images */}
           <div className="mb-6">
             {listing.images && listing.images.length > 0 ? (
@@ -259,7 +294,6 @@ const ListingDetails = () => {
               </div>
             )}
           </div>
-
           {/* Host Information */}
           <div className="mb-6 p-4 border border-gray-200 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -270,7 +304,6 @@ const ListingDetails = () => {
               {listing.host.phoneNumber && ` | ${listing.host.phoneNumber}`}
             </p>
           </div>
-
           {/* Description */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -279,8 +312,7 @@ const ListingDetails = () => {
             <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
               {listing.description}
             </p>
-          </div>
-
+          </div>{" "}
           {/* Availability */}
           {listing.availability &&
             (listing.availability.start || listing.availability.end) && (
@@ -331,10 +363,18 @@ const ListingDetails = () => {
                   </span>
                   <span className="text-gray-600 ml-1">per night</span>
                 </div>
-              </div>
-
+              </div>{" "}
               {/* Booking Form */}
               <form onSubmit={handleBooking} className="space-y-4">
+                {/* Date Selection Instructions */}
+                {unavailableDates.length > 0 && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      <span className="font-medium">Note:</span> Dates not
+                      highlighted are unavailable for booking.
+                    </p>
+                  </div>
+                )}
                 {/* Check-in Date */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -350,7 +390,6 @@ const ListingDetails = () => {
                     minDate={new Date()}
                   />
                 </div>
-
                 {/* Check-out Date */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -367,7 +406,6 @@ const ListingDetails = () => {
                     disabled={!checkInDate}
                   />
                 </div>
-
                 {/* Booking Summary */}
                 {nights > 0 && (
                   <div className="border-t border-gray-200 pt-4">
@@ -385,20 +423,17 @@ const ListingDetails = () => {
                     </div>
                   </div>
                 )}
-
                 {/* Error and Success Messages */}
                 {bookingError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                     <p className="text-sm text-red-600">{bookingError}</p>
                   </div>
                 )}
-
                 {bookingSuccess && (
                   <div className="p-3 bg-green-50 border border-green-200 rounded-md">
                     <p className="text-sm text-green-600">{bookingSuccess}</p>
                   </div>
-                )}
-
+                )}{" "}
                 {/* Submit Button */}
                 <button
                   type="submit"
@@ -406,7 +441,8 @@ const ListingDetails = () => {
                     bookingLoading ||
                     !checkInDate ||
                     !checkOutDate ||
-                    listing.host._id === user?._id
+                    listing.host._id === user?._id ||
+                    hasUnavailableDatesInRange()
                   }
                   className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition duration-200"
                 >
@@ -414,10 +450,11 @@ const ListingDetails = () => {
                     ? "Creating Booking..."
                     : listing.host._id === user?._id
                     ? "Cannot book your own listing"
+                    : hasUnavailableDatesInRange()
+                    ? "Selected dates unavailable"
                     : "Reserve"}
                 </button>
               </form>
-
               <p className="text-xs text-gray-500 mt-3 text-center">
                 You won't be charged yet
               </p>

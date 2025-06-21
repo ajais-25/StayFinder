@@ -13,30 +13,15 @@ const CreateListing = () => {
     location: "",
     pricePerNight: "",
     images: [],
-    availability: {
-      start: "",
-      end: "",
-    },
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name.startsWith("availability.")) {
-      const field = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        availability: {
-          ...prev.availability,
-          [field]: value,
-        },
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleImageChange = (e) => {
@@ -57,14 +42,6 @@ const CreateListing = () => {
       submitData.append("description", formData.description);
       submitData.append("location", formData.location);
       submitData.append("pricePerNight", formData.pricePerNight);
-
-      // Send availability as JSON string if both dates are provided
-      if (formData.availability.start && formData.availability.end) {
-        submitData.append(
-          "availability",
-          JSON.stringify(formData.availability)
-        );
-      }
 
       // Append images
       formData.images.forEach((image, index) => {
@@ -174,42 +151,6 @@ const CreateListing = () => {
             />
           </div>
 
-          {/* Availability */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="availability.start"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Available From
-              </label>
-              <input
-                type="date"
-                id="availability.start"
-                name="availability.start"
-                value={formData.availability.start}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="availability.end"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Available Until
-              </label>
-              <input
-                type="date"
-                id="availability.end"
-                name="availability.end"
-                value={formData.availability.end}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-          </div>
-
           {/* Images */}
           <div>
             <label
@@ -237,17 +178,17 @@ const CreateListing = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium cursor-pointer"
             >
               {loading ? "Creating Listing..." : "Create Listing"}
             </button>
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium"
+              className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 font-medium cursor-pointer"
             >
               Cancel
-            </button>{" "}
+            </button>
           </div>
         </form>
       </div>

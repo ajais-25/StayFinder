@@ -24,10 +24,6 @@ const listingSchema = new Schema(
             ref: "User",
             required: true,
         },
-        availability: {
-            start: Date,
-            end: Date,
-        },
     },
     { timestamps: true }
 );
