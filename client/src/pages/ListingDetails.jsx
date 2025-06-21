@@ -349,9 +349,8 @@ const ListingDetails = () => {
                 </div>
               </div>
             )}
-        </div>
-
-        {/* Right Column - Booking Form */}
+        </div>{" "}
+        {/* Right Column - Booking Form or Host Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-8">
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
@@ -362,101 +361,122 @@ const ListingDetails = () => {
                   </span>
                   <span className="text-gray-600 ml-1">per night</span>
                 </div>
-              </div>{" "}
-              {/* Booking Form */}
-              <form onSubmit={handleBooking} className="space-y-4">
-                {/* Date Selection Instructions */}
-                {unavailableDates.length > 0 && (
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <p className="text-sm text-yellow-800">
-                      <span className="font-medium">Note:</span> Dates not
-                      highlighted are unavailable for booking.
+              </div>
+
+              {/* Show Update Listing button if user is the host */}
+              {listing.host._id === user?._id ? (
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm text-blue-800 text-center font-medium">
+                      This is your listing
                     </p>
                   </div>
-                )}
-                {/* Check-in Date */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Check-in Date
-                  </label>
-                  <DatePicker
-                    selected={checkInDate}
-                    onChange={(date) => setCheckInDate(date)}
-                    filterDate={(date) => !isDateDisabled(date)}
-                    placeholderText="Select check-in date"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    dateFormat="MMM dd, yyyy"
-                    minDate={new Date()}
-                  />
+                  <button
+                    onClick={() => navigate(`/edit-listing/${listing._id}`)}
+                    className="w-full py-3 px-4 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200 cursor-pointer"
+                  >
+                    Update Listing
+                  </button>
+                  <button
+                    onClick={() => navigate("/dashboard")}
+                    className="w-full py-2 px-4 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 cursor-pointer"
+                  >
+                    View Dashboard
+                  </button>
                 </div>
-                {/* Check-out Date */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Check-out Date
-                  </label>
-                  <DatePicker
-                    selected={checkOutDate}
-                    onChange={(date) => setCheckOutDate(date)}
-                    filterDate={(date) => !isDateDisabled(date)}
-                    placeholderText="Select check-out date"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    dateFormat="MMM dd, yyyy"
-                    minDate={getMinCheckOutDate()}
-                    disabled={!checkInDate}
-                  />
-                </div>
-                {/* Booking Summary */}
-                {nights > 0 && (
-                  <div className="border-t border-gray-200 pt-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>
-                          ${listing.pricePerNight} × {nights} nights
-                        </span>
-                        <span>${listing.pricePerNight * nights}</span>
-                      </div>
-                      <div className="flex justify-between font-semibold">
-                        <span>Total</span>
-                        <span>${totalPrice}</span>
+              ) : (
+                /* Booking Form for non-hosts */
+                <form onSubmit={handleBooking} className="space-y-4">
+                  {/* Date Selection Instructions */}
+                  {unavailableDates.length > 0 && (
+                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <p className="text-sm text-yellow-800">
+                        <span className="font-medium">Note:</span> Dates not
+                        highlighted are unavailable for booking.
+                      </p>
+                    </div>
+                  )}
+                  {/* Check-in Date */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Check-in Date
+                    </label>
+                    <DatePicker
+                      selected={checkInDate}
+                      onChange={(date) => setCheckInDate(date)}
+                      filterDate={(date) => !isDateDisabled(date)}
+                      placeholderText="Select check-in date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      dateFormat="MMM dd, yyyy"
+                      minDate={new Date()}
+                    />
+                  </div>
+                  {/* Check-out Date */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Check-out Date
+                    </label>
+                    <DatePicker
+                      selected={checkOutDate}
+                      onChange={(date) => setCheckOutDate(date)}
+                      filterDate={(date) => !isDateDisabled(date)}
+                      placeholderText="Select check-out date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      dateFormat="MMM dd, yyyy"
+                      minDate={getMinCheckOutDate()}
+                      disabled={!checkInDate}
+                    />
+                  </div>
+                  {/* Booking Summary */}
+                  {nights > 0 && (
+                    <div className="border-t border-gray-200 pt-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>
+                            ${listing.pricePerNight} × {nights} nights
+                          </span>
+                          <span>${listing.pricePerNight * nights}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold">
+                          <span>Total</span>
+                          <span>${totalPrice}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-                {/* Error and Success Messages */}
-                {bookingError && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-sm text-red-600">{bookingError}</p>
-                  </div>
-                )}
-                {bookingSuccess && (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                    <p className="text-sm text-green-600">{bookingSuccess}</p>
-                  </div>
-                )}{" "}
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={
-                    bookingLoading ||
-                    !checkInDate ||
-                    !checkOutDate ||
-                    listing.host._id === user?._id ||
-                    hasUnavailableDatesInRange()
-                  }
-                  className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition duration-200"
-                >
-                  {bookingLoading
-                    ? "Creating Booking..."
-                    : listing.host._id === user?._id
-                    ? "Cannot book your own listing"
-                    : hasUnavailableDatesInRange()
-                    ? "Selected dates unavailable"
-                    : "Reserve"}
-                </button>
-              </form>
-              <p className="text-xs text-gray-500 mt-3 text-center">
-                You won't be charged yet
-              </p>
+                  )}
+                  {/* Error and Success Messages */}
+                  {bookingError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-sm text-red-600">{bookingError}</p>
+                    </div>
+                  )}
+                  {bookingSuccess && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                      <p className="text-sm text-green-600">{bookingSuccess}</p>
+                    </div>
+                  )}
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={
+                      bookingLoading ||
+                      !checkInDate ||
+                      !checkOutDate ||
+                      hasUnavailableDatesInRange()
+                    }
+                    className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition duration-200"
+                  >
+                    {bookingLoading
+                      ? "Creating Booking..."
+                      : hasUnavailableDatesInRange()
+                      ? "Selected dates unavailable"
+                      : "Reserve"}
+                  </button>
+                  <p className="text-xs text-gray-500 mt-3 text-center">
+                    You won't be charged yet
+                  </p>
+                </form>
+              )}
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import CreateListing from "./pages/CreateListing";
+import EditListing from "./pages/EditListing";
 import Profile from "./pages/Profile";
 import ListingDetails from "./pages/ListingDetails";
 import MyBookings from "./pages/MyBookings";
@@ -33,6 +34,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="create-listing" element={<CreateListing />} />
+              <Route path="edit-listing/:id" element={<EditListing />} />
               <Route path="profile" element={<Profile />} />
               <Route path="my-bookings" element={<MyBookings />} />
               <Route path="listing/:id" element={<ListingDetails />} />

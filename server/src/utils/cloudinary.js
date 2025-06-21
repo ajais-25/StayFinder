@@ -65,30 +65,13 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 };
 
-const deleteImageFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (publicId) => {
     try {
         if (!publicId) return null;
 
         // delete file from cloudinary
         const res = await cloudinary.api.delete_resources([`${publicId}`], {
-            resource_type: "image",
-            invalidate: true,
-        });
-        console.log(res);
-        return res;
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
-};
-
-const deleteVideoFromCloudinary = async (publicId) => {
-    try {
-        if (!publicId) return null;
-
-        // delete file from cloudinary
-        const res = await cloudinary.api.delete_resources([`${publicId}`], {
-            resource_type: "video",
+            resource_type: "auto", // Automatically detect resource type (image/video)
             invalidate: true,
         });
         return res;
@@ -98,8 +81,4 @@ const deleteVideoFromCloudinary = async (publicId) => {
     }
 };
 
-export {
-    uploadOnCloudinary,
-    deleteImageFromCloudinary,
-    deleteVideoFromCloudinary,
-};
+export { uploadOnCloudinary, deleteFromCloudinary };
