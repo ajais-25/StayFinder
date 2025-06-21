@@ -38,20 +38,24 @@ const PropertyCard = ({ listing }) => {
       <div className="relative h-48 bg-gray-200">
         {currentImage && !imageError ? (
           <>
+            {" "}
             <img
               src={currentImage}
               alt={listing.title}
               className="w-full h-full object-cover"
               onError={handleImageError}
+              loading="lazy"
             />
             {listing.images.length > 1 && (
               <>
+                {" "}
                 <button
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     prevImage();
                   }}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 shadow-md transition-all duration-200"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 shadow-md transition-all duration-200 z-10 cursor-pointer"
                 >
                   <svg
                     className="w-4 h-4 text-gray-600"
@@ -66,13 +70,14 @@ const PropertyCard = ({ listing }) => {
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
-                </button>
+                </button>{" "}
                 <button
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     nextImage();
                   }}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 shadow-md transition-all duration-200"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-1 shadow-md transition-all duration-200 z-10 cursor-pointer"
                 >
                   <svg
                     className="w-4 h-4 text-gray-600"
