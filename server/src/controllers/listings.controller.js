@@ -138,7 +138,6 @@ const createListing = async (req, res) => {
         if (req.files && req.files.length > 0) {
             for (const file of req.files) {
                 const uploadResult = await uploadOnCloudinary(file.path);
-                console.log(uploadResult);
                 if (uploadResult) {
                     imageUrls.push(uploadResult.secure_url);
                 }
