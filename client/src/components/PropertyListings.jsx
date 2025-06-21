@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropertyCard from "./PropertyCard";
 import { PropertyListingsSkeleton } from "./SkeletonLoaders";
-import api from "../api";
+import { listingsAPI } from "../api";
 
 const PropertyListings = () => {
   const [listings, setListings] = useState([]);
@@ -14,36 +14,31 @@ const PropertyListings = () => {
     minPrice: "",
     maxPrice: "",
   });
-
   const fetchListings = async (page = 1, filterParams = {}) => {
     try {
       setLoading(true);
       setError(null);
 
       // Build query parameters
-      const queryParams = new URLSearchParams({
+      const params = {
         page: page.toString(),
         limit: "12", // Show 12 listings per page
-      });
+      };
 
       // Add filters if they exist
       if (filterParams.location) {
-        queryParams.append("location", filterParams.location);
+        params.location = filterParams.location;
       }
       if (filterParams.minPrice) {
-        queryParams.append("minPrice", filterParams.minPrice);
+        params.minPrice = filterParams.minPrice;
       }
       if (filterParams.maxPrice) {
-        queryParams.append("maxPrice", filterParams.maxPrice);
+        params.maxPrice = filterParams.maxPrice;
       }
 
-      const response = await api(`/listings?${queryParams}`);
+      const response = await listingsAPI.getAll(params);
 
-      if (!response.data.success) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.data;
+      const data = response.data;
 
       if (data.success) {
         setListings(data.data.listings);

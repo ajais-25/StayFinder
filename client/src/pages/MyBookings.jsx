@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../api";
+import { bookingsAPI } from "../api";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -13,7 +13,7 @@ const MyBookings = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/bookings/user");
+      const response = await bookingsAPI.getUserBookings();
       if (response.data.success) {
         setBookings(response.data.data);
       }
@@ -33,12 +33,9 @@ const MyBookings = () => {
     ) {
       return;
     }
-
     try {
       setCancellingId(bookingId);
-      const response = await api.patch(`/bookings/${bookingId}/status`, {
-        status: "cancelled",
-      });
+      const response = await bookingsAPI.updateStatus(bookingId, "cancelled");
 
       if (response.data.success) {
         // Update the booking status in the local state

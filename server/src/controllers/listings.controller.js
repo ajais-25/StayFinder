@@ -281,9 +281,7 @@ const deleteListing = async (req, res) => {
                 success: false,
                 message: "Listing not found",
             });
-        }
-
-        // Check if user is the host of this listing
+        } // Check if user is the host of this listing
         if (listing.host.toString() !== userId.toString()) {
             return res.status(403).json({
                 success: false,
@@ -291,11 +289,22 @@ const deleteListing = async (req, res) => {
             });
         }
 
+        // Cancel all bookings associated with this listing
+        await Booking.updateMany(
+            {
+                listing: id,
+                status: { $ne: "cancelled" }, // Only update non-cancelled bookings
+            },
+            {
+                status: "cancelled",
+            }
+        );
+
         await Listing.findByIdAndDelete(id);
 
         res.status(200).json({
             success: true,
-            message: "Listing deleted successfully",
+            message: "Listing and associated bookings deleted successfully",
         });
     } catch (error) {
         console.error("Error deleting listing:", error);

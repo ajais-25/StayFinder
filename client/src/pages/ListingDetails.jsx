@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, differenceInDays, addDays } from "date-fns";
-import api from "../api";
+import { listingsAPI, bookingsAPI } from "../api";
 import { useAuth } from "../contexts/AuthContext";
 
 const ListingDetails = () => {
@@ -22,13 +22,12 @@ const ListingDetails = () => {
   const [checkInDate, setCheckInDate] = useState(null);
   const [checkOutDate, setCheckOutDate] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [nights, setNights] = useState(0);
-  // Fetch listing details
+  const [nights, setNights] = useState(0); // Fetch listing details
   useEffect(() => {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/listings/${id}`);
+        const response = await listingsAPI.getById(id);
         if (response.data.success) {
           setListing(response.data.data);
           // Set unavailable dates from the response
@@ -105,14 +104,14 @@ const ListingDetails = () => {
         totalPrice: totalPrice,
       };
 
-      const response = await api.post("/bookings", bookingData);
+      const response = await bookingsAPI.create(bookingData);
 
       if (response.data.success) {
         setBookingSuccess("Booking created successfully!");
         setCheckInDate(null);
         setCheckOutDate(null);
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/");
         }, 2000);
       } else {
         setBookingError(response.data.message || "Failed to create booking");

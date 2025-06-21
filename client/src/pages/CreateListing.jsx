@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import api from "../api";
+import { listingsAPI } from "../api";
 
 const CreateListing = () => {
   const navigate = useNavigate();
@@ -31,7 +31,6 @@ const CreateListing = () => {
       images: files,
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -47,14 +46,11 @@ const CreateListing = () => {
       formData.images.forEach((image, index) => {
         submitData.append("images", image);
       });
-      await api.post("/listings", submitData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+
+      await listingsAPI.create(submitData);
 
       alert("Listing created successfully!");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error creating listing:", error);
       alert("Failed to create listing. Please try again.");
