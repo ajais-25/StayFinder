@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      "/api/v1": "http://localhost:3000",
+      "/api/v1": "https://stayfinder-dwm5.onrender.com",
     },
   },
 });
