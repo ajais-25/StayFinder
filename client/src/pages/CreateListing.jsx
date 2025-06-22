@@ -132,7 +132,7 @@ const CreateListing = () => {
               htmlFor="pricePerNight"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Price Per Night ($) *
+              Price Per Night (₹) *
             </label>
             <input
               type="number"

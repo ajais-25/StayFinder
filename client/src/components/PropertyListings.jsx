@@ -203,7 +203,7 @@ const PropertyListings = () => {
               </label>
               <input
                 type="number"
-                placeholder="$0"
+                placeholder="₹0"
                 value={filters.minPrice}
                 onChange={(e) =>
                   setFilters({ ...filters, minPrice: e.target.value })
@@ -217,7 +217,7 @@ const PropertyListings = () => {
               </label>
               <input
                 type="number"
-                placeholder="$1000"
+                placeholder="₹1000"
                 value={filters.maxPrice}
                 onChange={(e) =>
                   setFilters({ ...filters, maxPrice: e.target.value })

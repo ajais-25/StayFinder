@@ -223,7 +223,7 @@ const EditListing = () => {
                 htmlFor="pricePerNight"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Price per Night ($) *
+                Price per Night (₹) *
               </label>
               <input
                 type="number"
@@ -252,6 +252,7 @@ const EditListing = () => {
                         src={image}
                         alt={`Current image ${index + 1}`}
                         className="w-full h-24 object-cover rounded-md border border-gray-200"
+                        loading="lazy"
                       />
                     </div>
                   ))}

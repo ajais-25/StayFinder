@@ -178,6 +178,7 @@ const MyBookings = () => {
                       }
                       alt={booking.listing?.title}
                       className="w-full h-32 lg:h-full object-cover rounded-lg"
+                      loading="lazy"
                     />
                   </div>
 
@@ -218,7 +219,7 @@ const MyBookings = () => {
                       <div>
                         <p className="text-sm text-gray-500">Total Price</p>
                         <p className="font-medium text-lg">
-                          ${booking.totalPrice}
+                          ₹{booking.totalPrice}
                         </p>
                       </div>
                     </div>

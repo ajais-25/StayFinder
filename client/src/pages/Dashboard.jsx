@@ -118,7 +118,7 @@ const Dashboard = () => {
                 Monthly Revenue
               </h3>
               <p className="text-2xl font-bold text-purple-600">
-                $
+                ₹
                 {bookings
                   .filter((b) => b.status === "confirmed")
                   .reduce((sum, b) => sum + (b.totalPrice || 0), 0)
@@ -213,6 +213,7 @@ const Dashboard = () => {
                           }
                           alt={listing.title}
                           className="w-full h-48 object-cover"
+                          loading="lazy"
                         />
                       </div>
                       <div className="p-4">
@@ -223,7 +224,7 @@ const Dashboard = () => {
                           {listing.location}
                         </p>
                         <p className="text-lg font-bold text-green-600 mb-4">
-                          ${listing.pricePerNight}/night
+                          ₹{listing.pricePerNight}/night
                         </p>
                         <div className="flex space-x-2">
                           <Link
@@ -309,7 +310,7 @@ const Dashboard = () => {
                             <div>
                               <span className="font-medium">Total Price:</span>
                               <p className="text-green-600 font-semibold">
-                                ${booking.totalPrice}
+                                ₹{booking.totalPrice}
                               </p>
                             </div>
                             <div>

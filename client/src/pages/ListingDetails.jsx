@@ -276,6 +276,7 @@ const ListingDetails = () => {
                     src={listing.images[0]}
                     alt={listing.title}
                     className="w-full h-64 md:h-96 object-cover rounded-lg"
+                    loading="lazy"
                   />
                 </div>
                 {listing.images.slice(1, 5).map((image, index) => (
@@ -284,6 +285,7 @@ const ListingDetails = () => {
                     src={image}
                     alt={`${listing.title} ${index + 2}`}
                     className="w-full h-32 md:h-48 object-cover rounded-lg"
+                    loading="lazy"
                   />
                 ))}
               </div>
@@ -357,7 +359,7 @@ const ListingDetails = () => {
               <div className="mb-4">
                 <div className="flex items-baseline">
                   <span className="text-2xl font-bold text-gray-900">
-                    ${listing.pricePerNight}
+                    ₹{listing.pricePerNight}
                   </span>
                   <span className="text-gray-600 ml-1">per night</span>
                 </div>
@@ -433,13 +435,13 @@ const ListingDetails = () => {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span>
-                            ${listing.pricePerNight} × {nights} nights
+                            ₹{listing.pricePerNight} × {nights} nights
                           </span>
-                          <span>${listing.pricePerNight * nights}</span>
+                          <span>₹{listing.pricePerNight * nights}</span>
                         </div>
                         <div className="flex justify-between font-semibold">
                           <span>Total</span>
-                          <span>${totalPrice}</span>
+                          <span>₹{totalPrice}</span>
                         </div>
                       </div>
                     </div>

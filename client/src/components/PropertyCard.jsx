@@ -158,7 +158,7 @@ const PropertyCard = ({ listing }) => {
         <div className="flex items-center justify-between">
           <div className="text-right">
             <span className="text-xl font-bold text-gray-900">
-              ${listing.pricePerNight}
+              ₹{listing.pricePerNight}
             </span>
             <span className="text-gray-600 text-sm ml-1">/ night</span>
           </div>
