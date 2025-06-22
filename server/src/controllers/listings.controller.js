@@ -1,6 +1,9 @@
 import { Listing } from "../models/listings.model.js";
 import { Booking } from "../models/booking.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+    deleteFromCloudinary,
+    uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 
 // Get all listings
 const getAllListings = async (req, res) => {
@@ -334,6 +337,11 @@ const deleteListing = async (req, res) => {
                 success: false,
                 message: "You are not authorized to delete this listing",
             });
+        }
+
+        for (const image of listing.images) {
+            const public_id = image.split("/").pop().split(".")[0];
+            await deleteFromCloudinary(public_id);
         }
 
         // Cancel all bookings associated with this listing

@@ -26,7 +26,6 @@ const uploadOnCloudinary = async (localFilePath) => {
         // file uploaded successfully, remove the local temporary file
         try {
             fs.unlinkSync(localFilePath);
-            console.log("Temporary file deleted:", localFilePath);
         } catch (unlinkError) {
             console.log(
                 "Warning: Could not delete temporary file:",
@@ -65,15 +64,20 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 };
 
-const deleteFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (public_id) => {
     try {
-        if (!publicId) return null;
+        if (!public_id) return null;
 
         // delete file from cloudinary
-        const res = await cloudinary.api.delete_resources([`${publicId}`], {
-            resource_type: "auto", // Automatically detect resource type (image/video)
-            invalidate: true,
-        });
+        const res = await cloudinary.uploader.destroy(
+            `StayFinder/${public_id}`,
+            {
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET,
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            }
+        );
+
         return res;
     } catch (error) {
         console.log(error);
