@@ -109,7 +109,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-const logoutUser = (req, res) => {
+const logoutUser = async (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: true,
@@ -122,7 +122,7 @@ const logoutUser = (req, res) => {
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = async (req, res) => {
     const user = req.user;
 
     if (!user) {

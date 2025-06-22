@@ -32,7 +32,9 @@ const Profile = () => {
               <p className="text-gray-600">{user?.email}</p>
               <p className="text-sm text-gray-500 mt-1">
                 Member since{" "}
-                {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
+                {new Date(user?.createdAt || Date.now()).toLocaleDateString(
+                  "en-GB"
+                )}
               </p>
             </div>
           </div>
@@ -77,38 +79,17 @@ const Profile = () => {
                 Account Settings
               </h3>
 
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 cursor-pointer">
                 Edit Profile
               </button>
 
-              <button className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200">
+              <button className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200 cursor-pointer">
                 Change Password
               </button>
 
-              <button className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200">
+              <button className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200 cursor-pointer">
                 Delete Account
               </button>
-            </div>
-          </div>
-
-          {/* Statistics */}
-          <div className="mt-8 pt-8 border-t border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Account Statistics
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg text-center">
-                <div className="text-2xl font-bold text-blue-600">0</div>
-                <div className="text-sm text-gray-600">Listings Created</div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg text-center">
-                <div className="text-2xl font-bold text-green-600">0</div>
-                <div className="text-sm text-gray-600">Bookings Made</div>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg text-center">
-                <div className="text-2xl font-bold text-purple-600">0</div>
-                <div className="text-sm text-gray-600">Reviews Given</div>
-              </div>
             </div>
           </div>
         </div>
