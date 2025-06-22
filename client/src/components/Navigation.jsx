@@ -32,7 +32,6 @@ const Navigation = () => {
 
   // Get user initials for profile circle
   const getUserInitials = () => {
-    console.log(user);
     if (user?.name) {
       return user.name
         .split(" ")
